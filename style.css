@@ -6,6 +6,10 @@ svg {
   fill: white;
 }
 
+.bar {
+  fill: #4E79A7;
+}
+
 .cell {
   stroke-width: 1px;
 }

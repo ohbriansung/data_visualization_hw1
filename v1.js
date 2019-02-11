@@ -40,6 +40,21 @@ sortFunc = function(a, b) {
   return a["count"] - b["count"];
 }
 
+incidentFormatter = function (d) {
+  let text = d;
+  let parts = text.split(/[,-\s]+/);
+
+  if (parts !== null && parts.length >= 2) {
+    text = parts[0] + " " + parts[1];
+
+    if (parts.length > 2) {
+      text = text + "+";
+    }
+  }
+
+  return text;
+}
+
 drawChar = function(d) {
   let svg = d3.select("#svg1");
 
@@ -50,9 +65,9 @@ drawChar = function(d) {
 
   let margin = {
     top: 10,
-    right: 10,
+    right: 20,
     bottom: 30,
-    left: 100
+    left: 140
   };
 
   let bounds = svg.node().getBoundingClientRect();
@@ -67,14 +82,14 @@ drawChar = function(d) {
   let incidentScale = d3.scaleBand()
     .domain(incidents)
     .rangeRound([plotHeight, 0])
-    .paddingInner(0.1);
+    .paddingInner(0.2);
 
     let plot = svg.append("g");
     plot.attr("id", "plot1");
-    plot.attr("transform", translate(margin.right, margin.top));
+    plot.attr("transform", translate(margin.left, margin.top));
 
-    let xAxis = de.axisBottom(countScale)
-    let yAxis = de.axisLeft(incidentScale)
+    let xAxis = d3.axisBottom(countScale);
+    let yAxis = d3.axisLeft(incidentScale).tickFormat(incidentFormatter);
 
     let xGroup = plot.append("g").attr("id", "x-axis-1");
     xGroup.call(xAxis);
@@ -82,10 +97,15 @@ drawChar = function(d) {
 
     let yGroup = plot.append("g").attr("id", "y-axis-1");
     yGroup.call(yAxis);
-    yGroup.attr("transform", translate(plotWidth ,0));
+    yGroup.attr("transform", translate(0 ,0));
 
-    let bars = plot.selectAll("rect")
-      .data(count.entries(), function(d) { return d.key; });
+    let bars = plot.selectAll("rect").data(d);
+    bars.enter().append("rect")
+    .attr("class", "bar")
+    .attr("width", function(d) { return countScale(d.count); })
+    .attr("height", incidentScale.bandwidth())
+    .attr("x", 0)
+    .attr("y", function(d) { return incidentScale(d.incident); });
 }
 
 d3.csv(
