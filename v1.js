@@ -32,22 +32,48 @@ convertRow = function(row) {
 
   if (!(row["Police District"] in policeDistrictAndHour)) {
     policeDistrictAndHour[row["Police District"]] = {};
+    policeDistrictAndHour[row["Police District"]]["values"] = new Array(24);
     policeDistrictAndHour[row["Police District"]]["total"] = 0;
+
+    for (let i = 0; i < 24; i++) {
+      policeDistrictAndHour[row["Police District"]]["values"][i] = {
+        "hour": i,
+        "value": 0
+      };
+    }
   }
 
-  // creating dictionart for Incident Time (hour)
-  if (!(row["Incident Time"] in policeDistrictAndHour[row["Police District"]])) {
-    policeDistrictAndHour[row["Police District"]][row["Incident Time"]] = 1;
-  } else {
-    policeDistrictAndHour[row["Police District"]][row["Incident Time"]] += 1;
-  }
-
-  // record total count for sorting later
+  // increment hour count and total count for sorting later
+  policeDistrictAndHour[row["Police District"]]["values"][row["Incident Time"]]["value"] += 1;
   policeDistrictAndHour[row["Police District"]]["total"] += 1;
 }
 
+getDistrictAndHour = function() {
+  for (let key in policeDistrictAndHour) {
+    policeDistrictAndHourArray.push({
+      "district": key,
+      "total": policeDistrictAndHour[key]["total"],
+      "time": policeDistrictAndHour[key]["values"]
+    });
+  }
+
+  policeDistrictAndHourArray.sort(function(a, b) {
+    return a["total"] - b["total"];
+  })
+
+  district = policeDistrictAndHourArray.map(function(row) { return row["district"]; });
+
+  let time = policeDistrictAndHourArray[0].time
+  hours = time.map(function(row) { return row["hour"]; });
+}
+
 loadScaleAndAxis = function() {
-  let length = policeDistrictAndHourArray.length
+  let time = policeDistrictAndHourArray.map(function(d) { return d.time; });
+  let merged = d3.merge(time);
+  let mapped = merged.map(function(d) { return d.value; });
+  let min = d3.min(mapped);
+  let max = d3.max(mapped);
+  let mid = (min + max) / 2;
 
   scale = {
     "x": d3.scaleBand()
@@ -56,12 +82,8 @@ loadScaleAndAxis = function() {
     "y": d3.scaleBand()
       .domain(district)
       .range([params.plot.height, 0]),
-    "color": d3.scaleSequential(d3.interpolateViridis)
-      .domain([
-        policeDistrictAndHourArray[length - 1]["time"]["total"],
-        policeDistrictAndHourArray[parseInt(length / 2)]["time"]["total"],
-        policeDistrictAndHourArray[0]["time"]["total"]
-      ])
+    "color": d3.scaleSequential(d3.interpolatePurples)
+      .domain([min, mid, max])
   };
 
   axis = {
@@ -119,6 +141,7 @@ createHeatmap = function(id) {
     .append("g");
 
   rows.attr("class", "cell");
+  rows.attr("id", function(d) { return "District-" + d["district"]; });
 
   // shift the entire group to the appropriate y-location
   rows.attr("transform", function(d) {
@@ -127,18 +150,16 @@ createHeatmap = function(id) {
 
   // create one rect per cell within row group
   let cells = rows.selectAll("rect")
-    .data(function(d) {
-      let values = d["time"]
-      delete values["total"]
-      return values;
-    })
+    .data(function(d) { return d.time; })
     .enter()
     .append("rect");
 
-  cells.attr("x", function(d) { return scale.x(d.date); });
+  cells.attr("x", function(d) { return scale.x(d.hour); });
   cells.attr("y", 0); // handled by group transform
   cells.attr("width", scale.x.bandwidth());
   cells.attr("height", scale.y.bandwidth());
+  cells.attr("count", function(d) { return d.value; });
+
   // here is the color magic!
   cells.style("fill", function(d) { return scale.color(d.value); });
   cells.style("stroke", function(d) { return scale.color(d.value); });
@@ -151,18 +172,7 @@ d3.csv(
   DATA,
   convertRow
 ).then(function() {
-  for (let key in policeDistrictAndHour) {
-    policeDistrictAndHourArray.push({"district": key, "time": policeDistrictAndHour[key]});
-  }
-
-  policeDistrictAndHourArray.sort(function(a, b) {
-    return b["time"]["total"] - a["time"]["total"];
-  })
-
-  district = policeDistrictAndHourArray.map(function(row) { return row["district"]; });
-  hours = Object.keys(policeDistrictAndHourArray[0]["time"])
-  hours.pop()  // remove total
-
+  getDistrictAndHour()
   loadScaleAndAxis()
   createHeatmap(svgId)
 })
