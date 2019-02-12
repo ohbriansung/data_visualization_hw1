@@ -17,7 +17,7 @@ var params = {
   },
   "margin": {
     "top": 70,
-    "right": 10,
+    "right": 210,
     "bottom": 130,
     "left": 90
   }
@@ -77,6 +77,7 @@ loadScaleAndAxis = function() {
   let min = d3.min(mapped);
   let max = d3.max(mapped);
   let mid = (min + max) / 2;
+  let range = [min, mid + 20, max];
 
   scale = {
     "x": d3.scaleBand()
@@ -86,7 +87,9 @@ loadScaleAndAxis = function() {
       .domain(district)
       .range([params.plot.height, 0]),
     "color": d3.scaleSequential(d3.interpolatePurples)
-      .domain([min, mid, max])
+      .domain(range),
+    "max": max,
+    "min": min
   };
 
   axis = {
@@ -179,6 +182,40 @@ createHeatmap = function(id) {
   // here is the color magic!
   cells.style("fill", function(d) { return scale.color(d.value); });
   cells.style("stroke", function(d) { return scale.color(d.value); });
+
+  // position the legend elements
+  var legend = plot.selectAll(".legend")
+    .data(d3.range(scale.max), function(d) { return d; })
+    .enter().append("g")
+    .attr("class", "legend")
+    .attr("transform", translate(params.plot.width + 20, -params.margin.top + 25));
+
+  legend.append("rect")
+    .attr("x", function(d, i) { return i; })
+    .attr("width", 1)
+    .attr("height", 18)
+    .style("fill", function(d, i) { return scale.color(d); });
+
+  legend.append("text")
+    .attr("class", "label")
+    .attr("x", -10)
+    .attr("y", -5)
+    .style("text-anchor", "start")
+    .text("Number of Records");
+
+  legend.append("text")
+    .attr("class", "label")
+    .attr("x", -12)
+    .attr("y", 15)
+    .style("text-anchor", "start")
+    .text(scale.min);
+
+  legend.append("text")
+    .attr("class", "label")
+    .attr("x", scale.max + 2)
+    .attr("y", 15)
+    .style("text-anchor", "start")
+    .text(scale.max);
 
   // title
   svg.append("text")
