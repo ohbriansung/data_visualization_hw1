@@ -16,7 +16,7 @@ var colors = d3.scaleOrdinal().range([
   "#F1788D",
   "#CF3E53",
   "#B9CA5D",
-  "#4EB2A7"
+  "#96B036"
 ]).domain(resCategory);
 
 countResolution = function(d) {
