@@ -87,7 +87,7 @@ drawStackedChar = function(d) {
     top: 50,
     right: 165,
     bottom: 115,  // district axis
-    left: 50  // percent axis
+    left: 60  // percent axis
   };
 
   let bounds = svg.node().getBoundingClientRect();
@@ -95,7 +95,7 @@ drawStackedChar = function(d) {
   let plotHeight = bounds.height - margin.top - margin.bottom;
 
   let percentScale = d3.scaleLinear()
-    .domain([0, 100], .1)
+    .domain([0, 1], .1)
     .range([plotHeight, 0]);
 
   let positionScale = d3.scaleLinear()
@@ -122,7 +122,7 @@ drawStackedChar = function(d) {
 
   // create axis
   let xAxis = d3.axisBottom(districtsScale);
-  let yAxis = d3.axisLeft(percentScale);
+  let yAxis = d3.axisLeft(percentScale).ticks(5, "%");
 
   let xGroup = plot.append("g").attr("id", "x-axis-2");
   xGroup.call(xAxis);
@@ -143,7 +143,7 @@ drawStackedChar = function(d) {
   plot.append("text")  // bottom axis label
     .attr("text-anchor", "middle")
     .attr("class", "label")
-    .attr("transform", translate(-32, plotHeight / 2) + "rotate(-90)")
+    .attr("transform", translate(-40, plotHeight / 2) + "rotate(-90)")
     .text("% of Total Number of Records");
 
   // create bars
