@@ -50,14 +50,21 @@
               <span class="icon">
                 <i class="fas fa-chart-area"></i>
               </span>
-              <span>Visualization 1</span>
+              <span>Incident Distribution</span>
             </a>
 
             <a class="navbar-item" href="#vis2">
               <span class="icon">
                 <i class="fas fa-chart-area"></i>
               </span>
-              <span>Visualization 2</span>
+              <span>Incident Frequency</span>
+            </a>
+
+            <a class="navbar-item" href="#vis3">
+              <span class="icon">
+                <i class="fas fa-chart-area"></i>
+              </span>
+              <span>Case Status</span>
             </a>
           </div>
 
@@ -84,7 +91,7 @@
 
   <section id="vis1" class="section">
     <div class="container content">
-      <h2>Visualization 1</h2>
+      <h2>Incident Distribution</h2>
 
       <svg id="svg1" width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
       </svg>
@@ -114,9 +121,42 @@
 
   <section id="vis2" class="section">
     <div class="container content">
-      <h2>Visualization 2</h2>
+      <h2>Incident Frequency</h2>
 
       <svg id="svg2" width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
+      </svg>
+
+      <h3>Interpretation</h3>
+
+      <p>
+        If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+      </p>
+
+      <h3>Discussion</h3>
+
+      <p>
+        If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+      </p>
+
+      <h3>Credit</h3>
+
+      <p>
+        If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+      </p>
+    </div>
+  </section>
+
+  <!-- separator between sections -->
+  <hr class="container">
+
+  <!-- separator between sections -->
+  <hr class="container">
+
+  <section id="vis3" class="section">
+    <div class="container content">
+      <h2>Case Status</h2>
+
+      <svg id="svg3" width="100%" height="600" style="background-color: whitesmoke; border: 1px solid black;">
       </svg>
 
       <h3>Interpretation</h3>
@@ -193,7 +233,7 @@
           <!-- b level functionality -->
           <tr>
             <td class="has-text-centered">
-              <i class="far fa-fw fa-times-circle has-text-danger"></i>
+              <i class="far fa-fw fa-times-circle has-text-success"></i>
             </td>
 
             <td class="has-text-centered">
@@ -292,6 +332,7 @@
   <script src="common.js"></script>
   <script src="v1.js"></script>
   <script src="v2.js"></script>
+  <script src="v3.js"></script>
 
 <!-- end body and html -->
 </body>

@@ -1,3 +1,4 @@
+// [Reference] https://blockbuilder.org/sjengle/1e23258249638a508426470a48ff2924
 // [Reference] https://beta.observablehq.com/@sjengle/zillow-affordability-heatmap
 
 var svgId = "#svg2"
@@ -17,7 +18,7 @@ var params = {
   "margin": {
     "top": 10,
     "right": 10,
-    "bottom": 30,
+    "bottom": 35,
     "left": 60
   }
 };
@@ -61,7 +62,7 @@ getDistrictAndHour = function() {
 
   policeDistrictAndHourArray.sort(function(a, b) {
     return a["total"] - b["total"];
-  })
+  });
 
   district = policeDistrictAndHourArray.map(function(row) { return row["district"]; });
 
@@ -122,6 +123,15 @@ createPlot = function(id) {
   gx.attr("class", "axis");
   gx.attr("transform", translate(params.plot.x, params.plot.y + params.plot.height));
   gx.call(axis.x);
+
+  svg.append("text")  // bottom axis label
+    .attr("text-anchor", "middle")
+    .attr("class", "label")
+    .attr("transform", translate(
+      params.plot.x + params.plot.width / 2,
+      params.plot.y + params.plot.height + 25
+    ))
+    .text("Hour");
 
   let gy = svg.append("g");
   gy.attr("id", "y-axis-2");
