@@ -19,19 +19,17 @@
 
   <!-- header -->
   <section class="hero is-primary is-bold">
-    <!-- todo: change assignment and name -->
     <div class="hero-body">
       <div class="container">
         <h1 class="title">
-          Visualization Assignment
+          Visualization: Police Department Incident Reports
         </h1>
         <h2 class="subtitle">
-          Full Name
+          Brian Sung
         </h2>
       </div>
     </div>
 
-    <!-- todo: change navigation as needed -->
     <div class="hero-foot">
       <div class="container">
         <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -57,14 +55,21 @@
               <span class="icon">
                 <i class="fas fa-chart-area"></i>
               </span>
-              <span>Incident Frequency</span>
+              <span>Case Status</span>
             </a>
 
             <a class="navbar-item" href="#vis3">
               <span class="icon">
                 <i class="fas fa-chart-area"></i>
               </span>
-              <span>Case Status</span>
+              <span>Incident Frequency</span>
+            </a>
+
+            <a class="navbar-item" href="#prototypes">
+              <span class="icon">
+                <i class="fas fa-image"></i>
+              </span>
+              <span>Prototypes</span>
             </a>
           </div>
 
@@ -93,25 +98,33 @@
     <div class="container content">
       <h2>Incident Distribution</h2>
 
-      <svg id="svg1" width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
+      <svg id="svg1" width="100%" height="600" style="border: 1px solid black;">
       </svg>
 
       <h3>Interpretation</h3>
 
       <p>
-        If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+        Presenting count for each incident category. Filtered the data to remove incidents with less than 25 records. Sorted by the number of records. If the name of an incident contains more than two words, replaced the rest part of the name with '+'.
       </p>
+
+      <p>
+        Data encoding:
+      </p>
+
+      <pre>[{incident: "Larceny Theft", count: 4024}, {incident: "Other Miscellaneous", count: 948}, ...]</pre>
 
       <h3>Discussion</h3>
 
       <p>
-        If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+        I wanted to figure out what were the most incidents occured in San Francisco. Apparently, stealing is the most common type of indicents happended in San Francisco.
       </p>
 
       <h3>Credit</h3>
 
       <p>
-        If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+        [1] <a href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-2018-to-Present/wg3w-h783">Data by SFPD Indicents</a><br/>
+        [2] <a href="https://blockbuilder.org/sjengle/1e23258249638a508426470a48ff2924">Letter Count Bar Chart (d3v4) by Sophie Engle</a><br/>
+        [3] <a href="https://beta.observablehq.com/@sjengle/zillow-affordability-heatmap">Zillow Affordability Heatmap by Sophie Engle</a>
       </p>
     </div>
   </section>
@@ -121,27 +134,36 @@
 
   <section id="vis2" class="section">
     <div class="container content">
-      <h2>Incident Frequency</h2>
+      <h2>Case Status Per District</h2>
 
-      <svg id="svg2" width="100%" height="400" style="background-color: whitesmoke; border: 1px solid black;">
+      <svg id="svg2" width="100%" height="630" style="border: 1px solid black;">
       </svg>
 
       <h3>Interpretation</h3>
 
       <p>
-        If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+        Presenting the rate of each case status (resolution). All status add up to 100%. Color shows the detail of each resolution. Sorted by the total number of records. Splitted by police district.
       </p>
+
+      <p>
+        Data encoding:
+      </p>
+
+      <pre>[{district: "Central", total: 2174, values: [{resolution: "Open or Active", percent: 73.82704691812327, start: 26.172953081876727}, ...]}, ...]</pre>
 
       <h3>Discussion</h3>
 
       <p>
-        If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+        I wanted to know if more incidents means less efficient to close cases. Although there were more incidents happened in Central, the ratio of the open cases is not more than districts with less number of records, such as Northern, Southern, and Taraval.
       </p>
 
       <h3>Credit</h3>
 
       <p>
-        If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+        [1] <a href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-2018-to-Present/wg3w-h783">Data by SFPD Indicents</a><br/>
+        [2] <a href="https://blockbuilder.org/sjengle/1e23258249638a508426470a48ff2924">Letter Count Bar Chart (d3v4) by Sophie Engle</a><br/>
+        [3] <a href="https://beta.observablehq.com/@sjengle/zillow-affordability-heatmap">Zillow Affordability Heatmap by Sophie Engle</a><br/>
+        [4] <a href="http://bl.ocks.org/tmaybe/6144082">Stacked to Normalized Stacked Bar Chart by Tomas Apodaca</a>
       </p>
     </div>
   </section>
@@ -154,28 +176,50 @@
 
   <section id="vis3" class="section">
     <div class="container content">
-      <h2>Case Status</h2>
+      <h2>Incident Frequency Per Hour</h2>
 
-      <svg id="svg3" width="100%" height="600" style="background-color: whitesmoke; border: 1px solid black;">
+      <svg id="svg3" width="100%" height="600" style="border: 1px solid black;">
       </svg>
 
       <h3>Interpretation</h3>
 
       <p>
-        If appropriate, provide a brief discussion of how to interpret this visualization (e.g. how the data is encoded) and how to interact with this visualization. Some of this discussion may not be necessary depending on the legends provided with the visualization.
+        Presenting the number of records per hour. Color shows the count of incident happened in each hour. The thicker the color, the more the number of records is. Used color module from d3-scale-chromatic. Set the count to 0 if no record. Splitted records by police district. Sorted by the number of records.
       </p>
+
+      <p>
+        Data encoding:
+      </p>
+
+      <pre>[{district: "Out of SF", total: 292, time: [{hour: 0, value: 25}, {hour: 1, value: 8}, ...]}, ...]</pre>
 
       <h3>Discussion</h3>
 
       <p>
-        If appropriate, provide a brief discussion of the primary goal and findings of the visualization, any challenges encountered creating the visualization, and any other context as required by the assignment.
+        I wanted to know which cities are more danger and which are safer. Moreover, I wanted to observe which hours are more danger and which are safer. It's interesting that we would assume that darkness means it's easier for illgal activities. However, it's not necessarily true for 1 am to 5 am (dark) shown in the heatmap. Same for 10 am to 5 pm (bright).
       </p>
 
       <h3>Credit</h3>
 
       <p>
-        If appropriate, provide credit for the dataset, any code used, and design inspirations here. Unsufficient discussion here is a violation of the <a href="/syllabus.html#cheating-policy">academic honesty policy</a> and may result in an F grade for the assignment or the <em>entire</em> course.
+        [1] <a href="https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports-2018-to-Present/wg3w-h783">Data by SFPD Indicents</a><br/>
+        [2] <a href="https://blockbuilder.org/sjengle/1e23258249638a508426470a48ff2924">Letter Count Bar Chart (d3v4) by Sophie Engle</a><br/>
+        [3] <a href="https://beta.observablehq.com/@sjengle/zillow-affordability-heatmap">Zillow Affordability Heatmap by Sophie Engle</a><br/>
+        [4] <a href="https://github.com/d3/d3-scale-chromatic">Color by d3-scale-chromatic</a>
       </p>
+    </div>
+  </section>
+
+  <!-- separator between sections -->
+  <hr class="container">
+
+  <section id="prototypes" class="section">
+    <div class="container content">
+      <img src="img/Incident Distribution.png">
+      <img src="img/Case Status Per District.png">
+      <img src="img/Incident Frequency Per Hour.png">
+      <img src="img/Report Period Per Incident.png">
+      <img src="img/Incident Density Map.png">
     </div>
   </section>
 
@@ -189,7 +233,6 @@
         Expected Grade
       </h2>
 
-      <!-- todo: modify to indicate your expected grade -->
       <table class="table is-hoverable">
         <thead>
           <tr>
@@ -211,7 +254,7 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              Created five different visualizations with three different encodings in Tableau. In these visualizations, five different perspectives were presented, three of them used color to encode data. Titles, axis labels and captions were provided in static pictures of prototyps.
             </td>
           </tr>
 
@@ -226,14 +269,14 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              Implemented Incident Distribution in D3. Matched as much of the design from your Tableau prototype as possible.
             </td>
           </tr>
 
           <!-- b level functionality -->
           <tr>
             <td class="has-text-centered">
-              <i class="far fa-fw fa-times-circle has-text-success"></i>
+              <i class="far fa-fw fa-check-circle has-text-success"></i>
             </td>
 
             <td class="has-text-centered">
@@ -241,7 +284,7 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              Implemented Incident Frequency Per Hour in D3. Matched as much of the design from your Tableau prototype as possible.
             </td>
           </tr>
 
@@ -249,7 +292,7 @@
           <!-- a level functionality -->
           <tr>
             <td class="has-text-centered">
-              <i class="far fa-fw fa-times-circle has-text-danger"></i>
+              <i class="far fa-fw fa-check-circle has-text-success"></i>
             </td>
 
             <td class="has-text-centered">
@@ -257,20 +300,21 @@
             </td>
 
             <td>
-              If appropriate, provide a brief justification for this level of functionality. Clearly state if this level was not implemented.
+              Implemented Incident Frequency Per Hour in D3. Matched as much of the design from your Tableau prototype as possible.
             </td>
           </tr>
         <tbody>
       </table>
 
       <p>
-        Any additional context you want to provide regarding functionality and grading can be included here. This may include any challenges or bugs you ran into that prevented you from implementing additional functionality.
+        For Incident Frequency Per Hour, it's hard to generate same color encoding using both Tableau and d3-scale-chromatic but I've tried to make it as similar as I can. The two datasets are equal though.<br/>
+        The last two prototypes are for practicing, no D3 implementation now.<br/>
+        There is a border on each plot that I couldn't hide.
       </p>
     </div>
   </section>
 
   <!-- about section -->
-  <!-- todo: can fill in, or link to an about page you use for all assignments -->
   <section class="section">
     <div class="container content">
       <h2 id="about">
@@ -280,25 +324,23 @@
       <div class="media">
         <div class="media-left">
           <p class="image is-128x128">
-            <!-- todo: replace with your profile image -->
-            <img src="https://bulma.io/images/placeholders/128x128.png">
+            <img src="https://media.licdn.com/dms/image/C4D03AQF-Z1uoskTZZQ/profile-displayphoto-shrink_200_200/0?e=1555545600&v=beta&t=OOaQ6oiZeR3jYWe36rwIbUBVB1v1knW6W5G6hCHijNA">
           </p>
         </div>
 
         <div class="media-content">
             <p>
-              <!-- todo: replace with your information -->
-              <strong>Full Name</strong>
+              <strong>Brian Sung</strong>
               <br/>
-              This is a good place to place a brief biography describing your interests and skills, a professional profile photo, and/or links to your Github, Linkedin, and other <em>professional</em> social media accounts.
+              An enthusiastic and responsible man with ambition and creativity. Capable of working as a dedicated team member as well as an independent initiative taker.
               <br/>
               <!-- find brand icons at: https://fontawesome.com/icons?d=gallery&s=brands&m=free -->
-              <a href="https://github.com/">
+              <a href="https://github.com/ohbriansung">
                 <span class="fab fa-github"></span>
                 <span>Github</span>
               </a>
               &bullet;
-              <a href="https://www.linkedin.com/">
+              <a href="https://www.linkedin.com/in/ohbriansung">
                 <span class="fab fa-linkedin"></span>
                 <span>LinkedIn</span>
               </a>

@@ -16,11 +16,29 @@ svg {
 
 .axis path,
 .axis line {
+  stroke: #F0F0F0;
+  fill: none;
+}
+
+.axis-heatmap path,
+.axis-heatmap line {
   stroke: none;
   fill: none;
 }
 
-.axis text, .label {
+.axis text,
+.label {
   fill: dimgrey;
-  font-size: 9px;
+  font-size: 12px;
+}
+
+.captions {
+  fill: #7D7D7D;
+  font-size: 16px;
+}
+
+
+.title {
+  fill: dimgrey;
+  font-size: 24px;
 }

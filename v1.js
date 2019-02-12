@@ -70,10 +70,10 @@ drawChar = function(d) {
   let max = d3.max(counts);
 
   let margin = {
-    top: 10,
+    top: 50,
     right: 20,
-    bottom: 35,  // count axis
-    left: 140  // incident axis
+    bottom: 100,  // count axis
+    left: 160  // incident axis
   };
 
   let bounds = svg.node().getBoundingClientRect();
@@ -88,11 +88,20 @@ drawChar = function(d) {
   let incidentScale = d3.scaleBand()
     .domain(incidents)
     .rangeRound([plotHeight, 0])
-    .paddingInner(0.2);  // spaces between bars
+    .paddingInner(0.3);  // spaces between bars
 
   let plot = svg.append("g");
   plot.attr("id", "plot1");
   plot.attr("transform", translate(margin.left, margin.top));
+
+  // grid lines
+  plot.append("g")
+    .attr("class", "axis")
+    .call(
+      d3.axisBottom(countScale)
+      .tickSize(plotHeight)
+      .tickFormat("")
+    );
 
   let xAxis = d3.axisBottom(countScale);
   let yAxis = d3.axisLeft(incidentScale).tickFormat(incidentFormatter);
@@ -100,16 +109,24 @@ drawChar = function(d) {
   let xGroup = plot.append("g").attr("id", "x-axis-1");
   xGroup.call(xAxis);
   xGroup.attr("transform", translate(0, plotHeight));  // bottom
+  xGroup.attr("class", "axis");
 
   plot.append("text")  // bottom axis label
     .attr("text-anchor", "middle")
     .attr("class", "label")
-    .attr("transform", translate(plotWidth / 2, plotHeight + 27))
-    .text("Incident Count");
+    .attr("transform", translate(plotWidth / 2, plotHeight + 32))
+    .text("Number of Records");
 
   let yGroup = plot.append("g").attr("id", "y-axis-1");
   yGroup.call(yAxis);
   yGroup.attr("transform", translate(0 ,0));  // left
+  yGroup.attr("class", "axis");
+
+  plot.append("text")  // bottom axis label
+    .attr("text-anchor", "end")
+    .attr("class", "label")
+    .attr("transform", translate(-5, -5))
+    .text("Incident Category");
 
   let bars = plot.selectAll("rect").data(d);
   bars.enter().append("rect")
@@ -118,6 +135,35 @@ drawChar = function(d) {
   .attr("height", incidentScale.bandwidth())  // fixed height
   .attr("x", 0)  // bars go from left side
   .attr("y", function(d) { return incidentScale(d.incident); });  // based on incident axis
+
+  // title
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "title")
+    .attr("transform", translate(-margin.left + 10, -25))
+    .text("Incident Distribution");
+
+  // caption
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "0em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2))
+    .text("Author: Brian Sung");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "1em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2))
+    .text("Presenting count for each incident category. Filtered the data to remove incidents with less than 25 records. Sorted by the number of records.");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "2em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2))
+    .text("I wanted to figure out what were the most incidents occured in San Francisco. Apparently, stealing is the most common type of indicents happended in San Francisco.");
 }
 
 d3.csv(

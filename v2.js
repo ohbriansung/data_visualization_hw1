@@ -1,191 +1,246 @@
 // [Reference] https://blockbuilder.org/sjengle/1e23258249638a508426470a48ff2924
 // [Reference] https://beta.observablehq.com/@sjengle/zillow-affordability-heatmap
+// [Reference] http://bl.ocks.org/tmaybe/6144082
+var resCategory = [
+  "Open or Active",
+  "Cite or Arrest Adult",
+  "Cite or Arrest Juvenile",
+  "Exceptional Adult",
+  "Exceptional Juvenile",
+  "Unfounded"
+];
 
-var svgId = "#svg2"
-var bounds = d3.select(svgId).node().getBoundingClientRect();
-var policeDistrictAndHour = {};
-var policeDistrictAndHourArray = new Array();
-var district;
-var hours;
-var scale;
-var axis;
+var colors = d3.scaleOrdinal().range([
+  "#97CFD0",
+  "#00A2B3",
+  "#F1788D",
+  "#CF3E53",
+  "#B9CA5D",
+  "#4EB2A7"
+]).domain(resCategory);
 
-var params = {
-  "svg": {
-    "width": bounds.width,
-    "height": bounds.height
-  },
-  "margin": {
-    "top": 10,
-    "right": 10,
-    "bottom": 35,
-    "left": 60
-  }
-};
+countResolution = function(d) {
+  let count = {};
 
-params["plot"] = {
-    "x": params["margin"]["left"],
-    "y": params["margin"]["top"],
-    "width": params["svg"]["width"] - params["margin"]["left"] - params["margin"]["right"],
-    "height": params["svg"]["height"] - params["margin"]["top"] - params["margin"]["bottom"]
-};
+  for (let i = 0; i < d.length; i++) {
+    let district = d[i]["Police District"];
+    let resolution = d[i]["Resolution"];
 
-convertRow = function(row) {
-  row["Incident Time"] = parseInt(getHour(parseTime(row["Incident Time"])));
-
-  if (!(row["Police District"] in policeDistrictAndHour)) {
-    policeDistrictAndHour[row["Police District"]] = {};
-    policeDistrictAndHour[row["Police District"]]["values"] = new Array(24);
-    policeDistrictAndHour[row["Police District"]]["total"] = 0;
-
-    for (let i = 0; i < 24; i++) {
-      policeDistrictAndHour[row["Police District"]]["values"][i] = {
-        "hour": i,
-        "value": 0
-      };
+    if (!(district in count)) {
+      count[district] = {};
+      count[district]["values"] = {};
+      count[district]["total"] = 0;
     }
+
+    if (!(resolution in count[district]["values"])) {
+      count[district]["values"][resolution] = 0;
+    }
+
+    count[district]["values"][resolution] += 1;
+    count[district]["total"] += 1;
   }
 
-  // increment hour count and total count for sorting later
-  policeDistrictAndHour[row["Police District"]]["values"][row["Incident Time"]]["value"] += 1;
-  policeDistrictAndHour[row["Police District"]]["total"] += 1;
+  return count;
 }
 
-getDistrictAndHour = function() {
-  for (let key in policeDistrictAndHour) {
-    policeDistrictAndHourArray.push({
+// Convert dictionary into array of entries and calculate percent with start points
+_convertToArray = function(d) {
+  let array = new Array();
+
+  for (let key in d) {
+    let temp = {
       "district": key,
-      "total": policeDistrictAndHour[key]["total"],
-      "time": policeDistrictAndHour[key]["values"]
-    });
+      "total": d[key]["total"],
+      "values": resCategory.map(function(row) {
+        return {
+          "resolution": row,
+          "percent": (row in d[key]["values"])
+            ? d[key]["values"][row] / d[key]["total"] * 100
+            : 0
+        };
+      })
+    }
+
+    for (let i = resCategory.length - 1, pre = 0; i >= 0; i--) {
+      temp["values"][i]["start"] = pre;
+      pre += temp["values"][i]["percent"];
+    }
+
+    array.push(temp);
   }
 
-  policeDistrictAndHourArray.sort(function(a, b) {
-    return a["total"] - b["total"];
-  });
-
-  district = policeDistrictAndHourArray.map(function(row) { return row["district"]; });
-
-  let time = policeDistrictAndHourArray[0].time
-  hours = time.map(function(row) { return row["hour"]; });
+  return array
 }
 
-loadScaleAndAxis = function() {
-  let time = policeDistrictAndHourArray.map(function(d) { return d.time; });
-  let merged = d3.merge(time);
-  let mapped = merged.map(function(d) { return d.value; });
-  let min = d3.min(mapped);
-  let max = d3.max(mapped);
-  let mid = (min + max) / 2;
+// Sort the array by count
+_sortFunc = function(a, b) {
+  return b["total"] - a["total"];
+}
 
-  scale = {
-    "x": d3.scaleBand()
-      .domain(hours)
-      .range([0, params.plot.width]),
-    "y": d3.scaleBand()
-      .domain(district)
-      .range([params.plot.height, 0]),
-    "color": d3.scaleSequential(d3.interpolatePurples)
-      .domain([min, mid, max])
+drawStackedChar = function(d) {
+  let svg = d3.select("#svg2");
+
+  let districts = d.map(function(row) { return row["district"]; });
+  let values = d.map(function(row) { return row["values"]; });
+
+  let margin = {
+    top: 50,
+    right: 165,
+    bottom: 115,  // district axis
+    left: 50  // percent axis
   };
 
-  axis = {
-    "x": d3.axisBottom(scale.x).tickPadding(0),
-    "y": d3.axisLeft(scale.y).tickPadding(0)
-  }
-}
+  let bounds = svg.node().getBoundingClientRect();
+  let plotWidth = bounds.width - margin.right - margin.left;
+  let plotHeight = bounds.height - margin.top - margin.bottom;
 
-createSVG = function(id) {
-  let svg = d3.select(id);
+  let percentScale = d3.scaleLinear()
+    .domain([0, 100], .1)
+    .range([plotHeight, 0]);
+
+  let positionScale = d3.scaleLinear()
+    .domain([0, 100], .1)
+    .range([0, plotHeight]);
+
+  let districtsScale = d3.scaleBand()
+    .domain(districts)
+    .rangeRound([0, plotWidth])
+    .paddingInner(0.2);  // spaces between bars
 
   let plot = svg.append("g");
-  plot.attr("id", "plot2");
-  plot.attr("transform", translate(params.plot.x, params.plot.y));
+  plot.attr("id", "plot3");
+  plot.attr("transform", translate(margin.left, margin.top));
 
-  let rect = plot.append("rect");
-  rect.attr("class", "rect-background");
-  rect.attr("id", "background2");
+  // grid lines
+  plot.append("g")
+    .attr("class", "axis")
+    .call(
+      d3.axisLeft(percentScale)
+      .tickSize(-plotWidth)
+      .tickFormat("")
+    );
 
-  rect.attr("x", 0);
-  rect.attr("y", 0);
-  rect.attr("width", params.plot.width);
-  rect.attr("height", params.plot.height);
+  // create axis
+  let xAxis = d3.axisBottom(districtsScale);
+  let yAxis = d3.axisLeft(percentScale);
 
-  return svg.node();
-}
+  let xGroup = plot.append("g").attr("id", "x-axis-2");
+  xGroup.call(xAxis);
+  xGroup.attr("transform", translate(0, plotHeight));  // bottom
+  xGroup.attr("class", "axis");
 
-createPlot = function(id) {
-  let node = createSVG(id);
-  let svg  = d3.select(node);
-
-  let gx = svg.append("g");
-  gx.attr("id", "x-axis-2");
-  gx.attr("class", "axis");
-  gx.attr("transform", translate(params.plot.x, params.plot.y + params.plot.height));
-  gx.call(axis.x);
-
-  svg.append("text")  // bottom axis label
+  plot.append("text")  // bottom axis label
     .attr("text-anchor", "middle")
     .attr("class", "label")
-    .attr("transform", translate(
-      params.plot.x + params.plot.width / 2,
-      params.plot.y + params.plot.height + 25
-    ))
-    .text("Hour");
+    .attr("transform", translate(plotWidth / 2, -10))
+    .text("Police District");
 
-  let gy = svg.append("g");
-  gy.attr("id", "y-axis-2");
-  gy.attr("class", "axis");
-  gy.attr("transform", translate(params.plot.x, params.plot.y));
-  gy.call(axis.y);
+  let yGroup = plot.append("g").attr("id", "y-axis-2");
+  yGroup.call(yAxis);
+  yGroup.attr("transform", translate(0 ,0));  // left
+  yGroup.attr("class", "axis");
 
-  return node;
+  plot.append("text")  // bottom axis label
+    .attr("text-anchor", "middle")
+    .attr("class", "label")
+    .attr("transform", translate(-32, plotHeight / 2) + "rotate(-90)")
+    .text("% of Total Number of Records");
+
+  // create bars
+  var district = plot.selectAll(".district")
+		.data(d)
+		.enter().append("g")
+		.attr("transform", function(d) {
+      return translate(districtsScale(d.district), 0);
+    });
+
+  district.selectAll("rect")
+		.data(function(d) { return d.values; })
+		.enter().append("rect")
+    .attr("x", 0)
+    .attr("y", function(d) { return positionScale(d.start); })
+		.attr("width", districtsScale.bandwidth())
+		.attr("height", function(d) { return positionScale(d.percent); })
+		.style("fill", function(d) { return colors(d.resolution); });
+
+  // position the legend elements
+	var legend = plot.selectAll(".legend")
+		.data(colors.domain())
+		.enter().append("g")
+		.attr("class", "legend")
+		.attr("transform", function(d, i) {
+      return translate(plotWidth + 10, -10 + i * 20);
+    });
+
+	legend.append("rect")
+		.attr("x", 0)
+		.attr("width", 18)
+		.attr("height", 18)
+		.style("fill", colors);
+
+	legend.append("text")
+    .attr("class", "label")
+		.attr("x", 25)
+		.attr("y", 12)
+		.style("text-anchor", "start")
+		.text(function(d) { return d; });
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "label")
+    .attr("transform", translate(plotWidth + 10, -20))
+    .text("Resolution");
+
+  // title
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "title")
+    .attr("transform", translate(-margin.left + 10, -25))
+    .text("Case Status Per District");
+
+  // caption
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "0em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 40))
+    .text("Author: Brian Sung");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "1em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 40))
+    .text("Presenting the rate of each case status (resolution). All status add up to 100%. Color shows the detail of each resolution. Sorted by the");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "2em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 40))
+    .text("total number of records. Splitted by police district.");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "3em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 40))
+    .text("I wanted to know if more incidents means less efficient to close cases. Although there were more incidents happened in Central, the ratio");
+
+  plot.append("text")
+    .attr("text-anchor", "start")
+    .attr("class", "captions")
+    .attr("dy", "4em")
+    .attr("transform", translate(-margin.left + 10, plotHeight + 40))
+    .text("of the open cases is not more than districts with less number of records, such as Northern, Southern, and Taraval.");
+
 }
 
-createHeatmap = function(id) {
-  let node = createPlot(id);
-  let svg  = d3.select(node);
-  let plot = svg.select("g#plot2");
-
-  // create one group per row
-  let rows = plot.selectAll("g.cell")
-    .data(policeDistrictAndHourArray)
-    .enter()
-    .append("g");
-
-  rows.attr("class", "cell");
-  rows.attr("id", function(d) { return "District-" + d["district"]; });
-
-  // shift the entire group to the appropriate y-location
-  rows.attr("transform", function(d) {
-    return translate(0, scale.y(d["district"]));
-  });
-
-  // create one rect per cell within row group
-  let cells = rows.selectAll("rect")
-    .data(function(d) { return d.time; })
-    .enter()
-    .append("rect");
-
-  cells.attr("x", function(d) { return scale.x(d.hour); });
-  cells.attr("y", 0); // handled by group transform
-  cells.attr("width", scale.x.bandwidth());
-  cells.attr("height", scale.y.bandwidth());
-  cells.attr("count", function(d) { return d.value; });
-
-  // here is the color magic!
-  cells.style("fill", function(d) { return scale.color(d.value); });
-  cells.style("stroke", function(d) { return scale.color(d.value); });
-
-  return node;
-}
-
-// start
 d3.csv(
-  DATA,
-  convertRow
-).then(function() {
-  getDistrictAndHour()
-  loadScaleAndAxis()
-  createHeatmap(svgId)
+  DATA
+).then(function(d) {
+  let counts = countResolution(d);
+  let array = _convertToArray(counts);
+  let sorted = array.sort(_sortFunc);
+  drawStackedChar(sorted);
 })
