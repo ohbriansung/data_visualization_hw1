@@ -77,7 +77,7 @@ loadScaleAndAxis = function() {
   let min = d3.min(mapped);
   let max = d3.max(mapped);
   let mid = (min + max) / 2;
-  let range = [min, mid + 20, max];
+  let range = [min, mid, max];
 
   scale = {
     "x": d3.scaleBand()
