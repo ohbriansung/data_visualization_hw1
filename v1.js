@@ -68,7 +68,7 @@ drawChar = function(d) {
     top: 60,
     right: 20,
     bottom: 100,  // count axis
-    left: 160  // incident axis
+    left: 170  // incident axis
   };
 
   let bounds = svg.node().getBoundingClientRect();
