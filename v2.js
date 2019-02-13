@@ -84,10 +84,10 @@ drawStackedChar = function(d) {
   let values = d.map(function(row) { return row["values"]; });
 
   let margin = {
-    top: 50,
-    right: 165,
-    bottom: 115,  // district axis
-    left: 60  // percent axis
+    top: 70,
+    right: 180,
+    bottom: 110,  // district axis
+    left: 70  // percent axis
   };
 
   let bounds = svg.node().getBoundingClientRect();
@@ -105,7 +105,7 @@ drawStackedChar = function(d) {
   let districtsScale = d3.scaleBand()
     .domain(districts)
     .rangeRound([0, plotWidth])
-    .paddingInner(0.2);  // spaces between bars
+    .paddingInner(0.3);  // spaces between bars
 
   let plot = svg.append("g");
   plot.attr("id", "plot3");
@@ -132,7 +132,7 @@ drawStackedChar = function(d) {
   plot.append("text")  // bottom axis label
     .attr("text-anchor", "middle")
     .attr("class", "label")
-    .attr("transform", translate(plotWidth / 2, -10))
+    .attr("transform", translate(plotWidth / 2, -15))
     .text("Police District");
 
   let yGroup = plot.append("g").attr("id", "y-axis-2");
@@ -143,7 +143,7 @@ drawStackedChar = function(d) {
   plot.append("text")  // bottom axis label
     .attr("text-anchor", "middle")
     .attr("class", "label")
-    .attr("transform", translate(-40, plotHeight / 2) + "rotate(-90)")
+    .attr("transform", translate(-50, plotHeight / 2) + "rotate(-90)")
     .text("% of Total Number of Records");
 
   // create bars
@@ -164,12 +164,12 @@ drawStackedChar = function(d) {
 		.style("fill", function(d) { return colors(d.resolution); });
 
   // position the legend elements
-	var legend = plot.selectAll(".legend")
+	var legend = svg.selectAll(".legend")
 		.data(colors.domain())
 		.enter().append("g")
 		.attr("class", "legend")
 		.attr("transform", function(d, i) {
-      return translate(plotWidth + 10, -10 + i * 20);
+      return translate(margin.left + plotWidth + 15, 120 - i * 20);
     });
 
 	legend.append("rect")
@@ -185,17 +185,17 @@ drawStackedChar = function(d) {
 		.style("text-anchor", "start")
 		.text(function(d) { return d; });
 
-  plot.append("text")
+  svg.append("text")
     .attr("text-anchor", "start")
     .attr("class", "label")
-    .attr("transform", translate(plotWidth + 10, -20))
+    .attr("transform", translate(margin.left + plotWidth + 15, 15))
     .text("Resolution");
 
   // title
-  plot.append("text")
+  svg.append("text")
     .attr("text-anchor", "start")
     .attr("class", "title")
-    .attr("transform", translate(-margin.left + 10, -25))
+    .attr("transform", translate(15, 35))
     .text("Case Status Per District");
 
   // caption

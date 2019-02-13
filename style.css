@@ -1,5 +1,14 @@
-svg {
+svg, .prototypes {
   background-color: white;
+  display: block;
+  margin: auto;
+  width: 960px;
+  height: 500px;
+  border: 1px solid black;
+}
+
+.prototypes {
+  margin-bottom: 10px;
 }
 
 .rect-background {
@@ -34,11 +43,10 @@ svg {
 
 .captions {
   fill: #7D7D7D;
-  font-size: 16px;
+  font-size: 13.3px;
 }
 
 
 .title {
-  fill: dimgrey;
-  font-size: 24px;
+  font-size: 20px;
 }

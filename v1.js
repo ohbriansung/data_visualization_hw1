@@ -48,14 +48,9 @@ sortFunc = function(a, b) {
 // Decrement the length of incident axis by leaving two words
 incidentFormatter = function (d) {
   let text = d;
-  let parts = text.split(/[,-\s]+/);
 
-  if (parts !== null && parts.length >= 2) {
-    text = parts[0] + " " + parts[1];
-
-    if (parts.length > 2) {
-      text = text + "+";
-    }
+  if (text.length > 26) {
+    text = text.substring(0, 24) + "..";
   }
 
   return text;
@@ -67,10 +62,10 @@ drawChar = function(d) {
   let incidents = d.map(function(row) { return row["incident"]; });
   let counts = d.map(function(row) { return row["count"]; });
   let min = 0;
-  let max = d3.max(counts);
+  let max = d3.max([d3.max(counts), 4250]);
 
   let margin = {
-    top: 50,
+    top: 60,
     right: 20,
     bottom: 100,  // count axis
     left: 160  // incident axis
@@ -82,8 +77,7 @@ drawChar = function(d) {
 
   let countScale = d3.scaleLinear()
     .domain([min, max])
-    .range([0, plotWidth])
-    .nice();
+    .range([0, plotWidth]);
 
   let incidentScale = d3.scaleBand()
     .domain(incidents)
@@ -94,16 +88,7 @@ drawChar = function(d) {
   plot.attr("id", "plot1");
   plot.attr("transform", translate(margin.left, margin.top));
 
-  // grid lines
-  plot.append("g")
-    .attr("class", "axis")
-    .call(
-      d3.axisBottom(countScale)
-      .tickSize(plotHeight)
-      .tickFormat("")
-    );
-
-  let xAxis = d3.axisBottom(countScale);
+  let xAxis = d3.axisBottom(countScale).tickSize(-plotHeight);
   let yAxis = d3.axisLeft(incidentScale).tickFormat(incidentFormatter);
 
   let xGroup = plot.append("g").attr("id", "x-axis-1");
@@ -137,10 +122,10 @@ drawChar = function(d) {
   .attr("y", function(d) { return incidentScale(d.incident); });  // based on incident axis
 
   // title
-  plot.append("text")
+  svg.append("text")
     .attr("text-anchor", "start")
     .attr("class", "title")
-    .attr("transform", translate(-margin.left + 10, -25))
+    .attr("transform", translate(15, 35))
     .text("Incident Distribution");
 
   // caption
@@ -148,21 +133,21 @@ drawChar = function(d) {
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "0em")
-    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2))
+    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2 + 5))
     .text("Author: Brian Sung");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "1em")
-    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2))
+    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2 + 5))
     .text("Presenting count for each incident category. Filtered the data to remove incidents with less than 25 records. Sorted by the number of records.");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "2em")
-    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2))
+    .attr("transform", translate(-margin.left + 10, plotHeight + margin.bottom / 2 + 5))
     .text("I wanted to figure out what were the most incidents occured in San Francisco. Apparently, stealing is the most common type of indicents happended in San Francisco.");
 }
 

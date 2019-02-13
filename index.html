@@ -98,13 +98,13 @@
     <div class="container content">
       <h2>Incident Distribution</h2>
 
-      <svg id="svg1" width="100%" height="600" style="border: 1px solid black;">
+      <svg id="svg1">
       </svg>
 
       <h3>Interpretation</h3>
 
       <p>
-        Presenting count for each incident category. Filtered the data to remove incidents with less than 25 records. Sorted by the number of records. If the name of an incident contains more than two words, replaced the rest part of the name with '+'.
+        Presenting count for each incident category. Filtered the data to remove incidents with less than 25 records. Sorted by the number of records. If the length of the name of an incident contains is more than 26 characters, leave the first 24 characters and replace the rest with ".."!
       </p>
 
       <p>
@@ -136,7 +136,7 @@
     <div class="container content">
       <h2>Case Status Per District</h2>
 
-      <svg id="svg2" width="100%" height="630" style="border: 1px solid black;">
+      <svg id="svg2">
       </svg>
 
       <h3>Interpretation</h3>
@@ -178,7 +178,7 @@
     <div class="container content">
       <h2>Incident Frequency Per Hour</h2>
 
-      <svg id="svg3" width="100%" height="600" style="border: 1px solid black;">
+      <svg id="svg3">
       </svg>
 
       <h3>Interpretation</h3>
@@ -215,11 +215,13 @@
 
   <section id="prototypes" class="section">
     <div class="container content">
-      <img src="img/Incident Distribution.png">
-      <img src="img/Case Status Per District.png">
-      <img src="img/Incident Frequency Per Hour.png">
-      <img src="img/Report Period Per Incident.png">
-      <img src="img/Incident Density Map.png">
+      <h2>Prototypes</h2>
+
+      <img src="img/Incident Distribution.png" class="prototypes">
+      <img src="img/Case Status Per District.png" class="prototypes">
+      <img src="img/Incident Frequency Per Hour.png" class="prototypes">
+      <img src="img/Report Period Per Incident.png" class="prototypes">
+      <img src="img/Incident Density Map.png" class="prototypes">
     </div>
   </section>
 
@@ -300,14 +302,14 @@
             </td>
 
             <td>
-              Implemented Incident Frequency Per Hour in D3. Matched as much of the design from your Tableau prototype as possible.  Included the caption and title.
+              Implemented Incident Frequency Per Hour in D3. Matched as much of the design from your Tableau prototype as possible. Included the caption, title and legend.
             </td>
           </tr>
         <tbody>
       </table>
 
       <p>
-        For Incident Frequency Per Hour, it's hard to generate same color encoding using both Tableau and d3-scale-chromatic but I've tried to make it as similar as I can. The two datasets are equal though.<br/>
+        For Incident Frequency Per Hour, it's hard to generate same sequential color encoding using both Tableau and d3-scale-chromatic in the same time but I've tried to make it as similar as I can. The two datasets are equal though.<br/>
         The last two prototypes are for practicing, no D3 implementation now.
       </p>
     </div>

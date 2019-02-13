@@ -17,8 +17,8 @@ var params = {
   },
   "margin": {
     "top": 70,
-    "right": 210,
-    "bottom": 130,
+    "right": 180,
+    "bottom": 110,
     "left": 90
   }
 };
@@ -125,6 +125,7 @@ createPlot = function(id) {
   gx.attr("id", "x-axis-3");
   gx.attr("class", "axis-heatmap");
   gx.attr("transform", translate(params.plot.x, params.plot.y));
+  gx.attr("text-anchor", "start")
   gx.call(axis.x);
 
   svg.append("text")  // bottom axis label
@@ -140,10 +141,10 @@ createPlot = function(id) {
   gy.call(axis.y);
 
   svg.append("text")  // bottom axis label
-    .attr("text-anchor", "start")
+    .attr("text-anchor", "end")
     .attr("class", "label")
-    .attr("transform", translate(5, params.plot.y - 5))
-    .text("Police District");
+    .attr("transform", translate(params.plot.x - 5, params.plot.y - 5))
+    .text("Police Distri..");
 
   return node;
 }
@@ -191,29 +192,29 @@ createHeatmap = function(id) {
     .attr("transform", translate(params.plot.width + 20, -params.margin.top + 25));
 
   legend.append("rect")
-    .attr("x", function(d, i) { return i; })
+    .attr("x", function(d, i) { return i * .75; })
     .attr("width", 1)
     .attr("height", 18)
     .style("fill", function(d, i) { return scale.color(d); });
 
   legend.append("text")
     .attr("class", "label")
-    .attr("x", -10)
+    .attr("x", -15)
     .attr("y", -5)
     .style("text-anchor", "start")
     .text("Number of Records");
 
   legend.append("text")
     .attr("class", "label")
-    .attr("x", -12)
-    .attr("y", 15)
+    .attr("x", -15)
+    .attr("y", 13)
     .style("text-anchor", "start")
     .text(scale.min);
 
   legend.append("text")
     .attr("class", "label")
-    .attr("x", scale.max + 2)
-    .attr("y", 15)
+    .attr("x", scale.max * .75 + 5)
+    .attr("y", 13)
     .style("text-anchor", "start")
     .text(scale.max);
 
@@ -221,7 +222,7 @@ createHeatmap = function(id) {
   svg.append("text")
     .attr("text-anchor", "start")
     .attr("class", "title")
-    .attr("transform", translate(5, 25))
+    .attr("transform", translate(15, 35))
     .text("Incident Frequency Per Hour");
 
   // caption
@@ -229,49 +230,49 @@ createHeatmap = function(id) {
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "0em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("Author: Brian Sung");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "1em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("Presenting the number of records per hour. Color shows the count of incident happened in each hour. The thicker the color, the more the");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "2em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("number of records is. Used color module from d3-scale-chromatic. Set the count to 0 if no record. Splitted records by police district.");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "3em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("Sorted by the number of records.");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "4em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("I wanted to know which cities are more danger and which are safer. Moreover, I wanted to observe which hours are more danger");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "5em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("and which are safer. It's interesting that we would assume that darkness means it's easier for illgal activities. However, it's not necessarily");
 
   plot.append("text")
     .attr("text-anchor", "start")
     .attr("class", "captions")
     .attr("dy", "6em")
-    .attr("transform", translate(-params.margin.left + 5, params.plot.height + 20))
+    .attr("transform", translate(-params.margin.left + 10, params.plot.height + 20))
     .text("true for 1 am to 5 am (dark) shown in the heatmap. Same for 10 am to 5 pm (bright).");
 
   return node;
