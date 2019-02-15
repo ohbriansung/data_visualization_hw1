@@ -96,27 +96,17 @@
 
   <section id="vis1" class="section">
     <div class="container content">
-      <h2>Incident Distribution</h2>
+      <h2>Visualization 1</h2>
 
       <svg id="svg1">
       </svg>
 
-      <h3>Interpretation</h3>
-
-      <p>
-        Presenting count for each incident category. Filtered the data to remove incidents with less than 25 records. Sorted by the number of records. If the length of the name of an incident contains is more than 26 characters, leave the first 24 characters and replace the rest with ".."!
-      </p>
-
-      <p>
-        Data encoding:
-      </p>
+      <h3>Data encoding</h3>
 
       <pre>[{incident: "Larceny Theft", count: 4024}, {incident: "Other Miscellaneous", count: 948}, ...]</pre>
 
-      <h3>Discussion</h3>
-
       <p>
-        I wanted to figure out what were the most incidents occured in San Francisco. Apparently, stealing is the most common type of indicents happended in San Francisco.
+        If the length of the name of an incident contains is more than 26 characters, leave the first 24 characters and replace the rest with ".."!
       </p>
 
       <h3>Credit</h3>
@@ -134,28 +124,14 @@
 
   <section id="vis2" class="section">
     <div class="container content">
-      <h2>Case Status Per District</h2>
+      <h2>Visualization 2</h2>
 
       <svg id="svg2">
       </svg>
 
-      <h3>Interpretation</h3>
-
-      <p>
-        Presenting the rate of each case status (resolution). All status add up to 100%. Color shows the detail of each resolution. Sorted by the total number of records. Splitted by police district.
-      </p>
-
-      <p>
-        Data encoding:
-      </p>
+      <h3>Data encoding</h3>
 
       <pre>[{district: "Central", total: 2174, values: [{resolution: "Open or Active", percent: 73.82704691812327, start: 26.172953081876727}, ...]}, ...]</pre>
-
-      <h3>Discussion</h3>
-
-      <p>
-        I wanted to know if more incidents means less efficient to close cases. Although there were more incidents happened in Central, the ratio of the open cases is not more than districts with less number of records, such as Northern, Southern, and Taraval.
-      </p>
 
       <h3>Credit</h3>
 
@@ -176,28 +152,14 @@
 
   <section id="vis3" class="section">
     <div class="container content">
-      <h2>Incident Frequency Per Hour</h2>
+      <h2>Visualization 3</h2>
 
       <svg id="svg3">
       </svg>
 
-      <h3>Interpretation</h3>
-
-      <p>
-        Presenting the number of records per hour. Color shows the count of incident happened in each hour. The thicker the color, the more the number of records is. Used color module from d3-scale-chromatic. Set the count to 0 if no record. Splitted records by police district. Sorted by the number of records.
-      </p>
-
-      <p>
-        Data encoding:
-      </p>
+      <h3>Data encoding</h3>
 
       <pre>[{district: "Out of SF", total: 292, time: [{hour: 0, value: 25}, {hour: 1, value: 8}, ...]}, ...]</pre>
-
-      <h3>Discussion</h3>
-
-      <p>
-        I wanted to know which cities are more danger and which are safer. Moreover, I wanted to observe which hours are more danger and which are safer. It's interesting that we would assume that darkness means it's easier for illgal activities. However, it's not necessarily true for 1 am to 5 am (dark) shown in the heatmap. Same for 10 am to 5 pm (bright).
-      </p>
 
       <h3>Credit</h3>
 
